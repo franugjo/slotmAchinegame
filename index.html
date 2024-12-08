@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Slot Machine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .slots {
+      font-size: 2rem;
+      margin: 20px;
+    }
+    .controls input {
+      margin: 5px;
+      padding: 10px;
+      font-size: 1rem;
+    }
+    .controls button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Slot Machine</h1>
+  <div class="slots" id="slots">- - -</div>
+  <div class="controls">
+    <label>
+      Bet: $<input type="number" id="bet" value="10" min="1">
+    </label>
+    <button onclick="spin()">Spin</button>
+  </div>
+  <div>
+    <p>Balance: $<span id="balance">100</span></p>
+  </div>
+  <div class="message" id="message"></div>
+
+  <script>
+    // Initialize balance and symbols
+    let balance = 100;
+    const symbols = ['🍒', '🍋', '🔔', '💎', '7'];
+
+    function spin() {
+      const bet = parseInt(document.getElementById("bet").value);
+      const messageEl = document.getElementById("message");
+
+      // Validate bet amount
+      if (bet > balance) {
+        messageEl.textContent = "You don't have enough balance!";
+        return;
+      }
+      if (bet <= 0) {
+        messageEl.textContent = "Bet must be greater than zero!";
+        return;
+      }
+
+      // Deduct the bet
+      balance -= bet;
+
+      // Generate random symbols
+      const slot1 = symbols[Math.floor(Math.random() * symbols.length)];
+      const slot2 = symbols[Math.floor(Math.random() * symbols.length)];
+      const slot3 = symbols[Math.floor(Math.random() * symbols.length)];
+
+      // Display the slots
+      document.getElementById("slots").textContent = `${slot1} ${slot2} ${slot3}`;
+
+      // Calculate winnings
+      if (slot1 === slot2 && slot2 === slot3) {
+        const winnings = bet * 10; // Jackpot
+        balance += winnings;
+        messageEl.textContent = `Jackpot! You won $${winnings}!`;
+      } else if (slot1 === slot2 || slot2 === slot3 || slot1 === slot3) {
+        const winnings = bet * 2; // Small win
+        balance += winnings;
+        messageEl.textContent = `You won $${winnings}!`;
+      } else {
+        messageEl.textContent = "You lost. Try again!";
+      }
+
+      // Update balance
+      document.getElementById("balance").textContent = balance;
+    }
+  </script>
+</body>
+</html>
